@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { logger } from "./src/middlewares/middleware";
-import { healthCkController, rootController } from "./src/controllers/baseControllers";
-import { createTokenController } from "./src/controllers/tokenControllers";
+import { logger } from "./middlewares/middleware";
+import { healthCkController, rootController } from "./controllers/baseControllers";
+import { createTokenController } from "./controllers/tokenControllers";
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8080;
