@@ -1,6 +1,6 @@
 import axios from "axios";
 import bcrypt from "bcrypt";
-import { commerceApiBaseUrl, commerceToken } from "../contants/apiUrl.js";
+import { commerceApiBaseUrl, commerceToken } from "../contants/apiUrl";
 const qs = require('querystring');
 
 // 토큰 자격증명 생성
