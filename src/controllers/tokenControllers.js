@@ -1,4 +1,4 @@
-import { createTokenService } from "../service/tokenService";
+import { createTokenService } from "../service/tokenService.js";
 
 // 토큰생성 컨트롤러
 export const createTokenController = async (req, res) => {
