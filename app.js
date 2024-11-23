@@ -22,3 +22,5 @@ const handleListening = () => {
 };
 
 app.listen(PORT, handleListening);
+
+module.exports = app;
