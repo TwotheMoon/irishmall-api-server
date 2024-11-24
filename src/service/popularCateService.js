@@ -15,7 +15,7 @@ export const getPopularCateService = async (keyword) => {
       },
       params: {
         'query': keyword,
-        'display': 100,
+        'display': 50,
         'exclude': "used:rental:cbshop",
       }
     });
