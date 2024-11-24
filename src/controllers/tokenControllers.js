@@ -8,7 +8,7 @@ export const createTokenController = async (req, res) => {
     res.json(access_token);
   
   } catch (error) {
-    console.log("토큰 발급 controller 오류", err.message);
+    console.log("토큰 발급 controller 오류", error.message);
     res.status(500).json({ error: "토큰 발급 실패 "})
   }
 };
