@@ -4,7 +4,6 @@ import { createTokenService } from "../service/tokenService";
 export const createTokenController = async (req, res) => {
   try {
     const access_token = await createTokenService();
-    console.log("new Token", access_token);
     res.json(access_token);
   
   } catch (error) {

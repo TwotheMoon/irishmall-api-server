@@ -1,3 +1,5 @@
+import "./db";
+import "./models/NaverAllCate";
 import app from "./server"
 
 const PORT = 4000;

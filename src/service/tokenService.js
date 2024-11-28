@@ -21,6 +21,7 @@ export const createTokenService = async () => {
     const grant_type = 'client_credentials';
     const type = 'SELF';
 
+
     // 자격증명 생성
     const client_secret_sign = await createSignatureService(client_id, client_secret, timestamp);
 
