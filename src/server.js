@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { logger } from "./middlewares/middleware";
+import { logger, uploadMycateMulter } from "./middlewares/middleware";
 import { healthCkController, rootController } from "./controllers/baseControllers";
-import { updateNaverAllCateController } from "./controllers/cateControllers";
-import { getPopularCateController } from "./controllers/cateControllers";
+import { getPopularCateController, updateMyCateExcelController, updateNaverAllCateController } from "./controllers/cateControllers";
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +14,7 @@ app.get('/', rootController)
 app.get('/health', healthCkController)
 app.post('/updateNaverAllCate', updateNaverAllCateController)
 app.post('/getPopularCate', getPopularCateController)
+app.post('/uploadMyCateExcel', uploadMycateMulter.single("file"), updateMyCateExcelController)
 
 
 export default app;
