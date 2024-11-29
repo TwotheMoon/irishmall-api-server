@@ -40,7 +40,8 @@ export const updateNaverAllCateBatch = async () => {
 
     await NaverAllCate.deleteMany();
     await NaverAllCate.insertMany(allCate);
-
+    
+    return true;
   } catch (error) {
     console.error("updateNaverAllCateBatch 서비스 오류: ", error.response.data || error.message);
   }
@@ -51,7 +52,6 @@ cron.schedule("0 9 * * *", () => {
   console.log("네이버 카테고리 업데이트 배치 실행");
   updateNaverAllCateBatch();
 });
-
 
 // 인기 카테고리 topN 서비스
 export const getPopularCateService = async (keyword) => {  

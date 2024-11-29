@@ -1,14 +1,18 @@
 import { 
-  getNaverAllCateService, 
   getPopularCateService, 
-  updateMyCateExcelService 
+  updateMyCateExcelService, 
+  updateNaverAllCateBatch
 } from "../service/cateService"
 
 // 네이버 All 카테고리 update 컨트롤러
 export const updateNaverAllCateController = async (req, res) => {
   try {
-    await getNaverAllCateService();
-    res.status(200);
+    const result = await updateNaverAllCateBatch();
+    if(result){
+      res.status(200).json({status: 200, message: "업데이트 되었습니다."});
+    } else {
+      res.status(500).json({status: 500, message: "업데이트에 실패하였습니다. 관리자에가 문의해주세요."});
+    }
 
   } catch (error) {
     console.error("updateNaverAllCate 컨트롤러 오류: ", error.response.data || error.message);
