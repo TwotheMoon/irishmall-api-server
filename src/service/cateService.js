@@ -40,7 +40,7 @@ export const updateNaverAllCateBatch = async () => {
 
     await NaverAllCate.deleteMany();
     await NaverAllCate.insertMany(allCate);
-    
+    console.log("네이버 카테고리 갱신 성공");
     return true;
   } catch (error) {
     console.error("updateNaverAllCateBatch 서비스 오류: ", error.response.data || error.message);
