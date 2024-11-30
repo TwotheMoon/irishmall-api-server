@@ -1,6 +1,7 @@
 import "./db";
 import "./models/NaverAllCate";
 import "./models/MyCate";
+import "./models/WhiteList";
 import app from "./server"
 
 const PORT = 4000;
