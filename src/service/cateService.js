@@ -51,7 +51,7 @@ export const updateNaverAllCateBatch = async () => {
 cron.schedule("0 9 * * *", () => {
   console.log("네이버 카테고리 업데이트 배치 실행");
   updateNaverAllCateBatch();
-});
+}, { timezone: "Asia/Seoul" });
 
 // 인기 카테고리 topN 서비스
 export const getPopularCateService = async (keyword) => {  

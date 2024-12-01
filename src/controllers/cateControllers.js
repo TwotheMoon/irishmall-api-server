@@ -11,7 +11,7 @@ export const updateNaverAllCateController = async (req, res) => {
     if(result){
       res.status(200).json({status: 200, message: "업데이트 되었습니다."});
     } else {
-      res.status(500).json({status: 500, message: "업데이트에 실패하였습니다. 관리자에가 문의해주세요."});
+      res.status(500).json({status: 500, message: "업데이트에 실패하였습니다. 관리자에게 문의해주세요."});
     }
 
   } catch (error) {
