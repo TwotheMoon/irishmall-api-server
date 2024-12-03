@@ -1,7 +1,7 @@
 
 // 루트 컨트롤러
 export const rootController = (req, res) => {
-  res.send("hellow");
+  res.redirect(301, "https://moondashboard.netlify.app/");
 };
 
 // 헬스체크 컨트롤러
