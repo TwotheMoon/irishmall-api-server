@@ -8,7 +8,7 @@ const database = 'MoonDB';
 const testDbBase = "MoonDB_test";
 
 const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
-// const testDbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`;
+// const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`; // 테스트DB
 
 mongoose.connect(dbConnectUrl);
 
