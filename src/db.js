@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const username = encodeURIComponent('dlaguddh1');
 const password = encodeURIComponent('Rjqnrdl94');
-const host = '125.133.33.2';
+const host = '172.17.0.3';
 const port = '27017';
 const database = 'MoonDB';
 const testDbBase = "MoonDB_test";
