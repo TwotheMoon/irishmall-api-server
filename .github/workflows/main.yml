@@ -1,0 +1,26 @@
+name: CI/CD for Node.js on Synology NAS
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Synology NAS
+        run: |
+          ssh -o StrictHostKeyChecking=no -p 2233 dlaguddh1@125.133.33.2 << EOF
+            cd /volume1/docker/md-api-server/irishmall-api-server
+            git pull origin main
+            npm run build
+          EOF
