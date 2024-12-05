@@ -19,9 +19,9 @@ jobs:
 
       - name: Deploy to Synology NAS
         run: |
-          ssh -o StrictHostKeyChecking=no -p 2233 dlaguddh1@125.133.33.2 "
+          ssh -o StrictHostKeyChecking=no -p 2233 dlaguddh1@125.133.33.2 << EOF
             cd /volume1/docker/md-api-server/irishmall-api-server
             git pull origin main
             sudo docker-compose down
             sudo docker-compose up -d --build
-          "
+          EOF
