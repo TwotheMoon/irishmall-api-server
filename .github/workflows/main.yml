@@ -33,4 +33,4 @@ jobs:
           key: ${{ secrets.NAS_SSH_KEY }}
           port: 2233
           script: |
-            docker restart md-api-server
+            /usr/local/bin/docker restart md-api-server
