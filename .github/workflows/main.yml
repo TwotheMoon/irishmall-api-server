@@ -24,3 +24,13 @@ jobs:
             git pull origin main
             npm run build
           EOF
+
+      - name: Restart Docker Container on Synology NAS
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          key: ${{ secrets.NAS_SSH_KEY }}
+          port: 2233
+          script: |
+            docker restart md-api-server
