@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { logger, uploadMycateMulter, whitelist } from "./middlewares/middleware";
 import { getNasLogController, healthCkController, rootController } from "./controllers/baseControllers";
-import { getPopularCateController, updateMyCateExcelController, updateNaverAllCateController } from "./controllers/cateControllers";
+import { getAllMyCateController, getPopularCateController, updateMyCateExcelController, updateNaverAllCateController } from "./controllers/cateControllers";
 import { createWhiteListController, deleteWhiteListController, readWhiteListController, updateWhiteListController } from "./controllers/whiteListControllers";
 require('dotenv').config();
 
@@ -16,6 +16,7 @@ app.use(logger);
 app.get('/', rootController)
 app.get('/health', healthCkController)
 app.get('/getNasLog', getNasLogController)
+app.get('/getAllMyCate', getAllMyCateController)
 
 // 카테고리 관련 EP
 app.post('/updateNaverAllCate', updateNaverAllCateController)

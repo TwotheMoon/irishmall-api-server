@@ -5,15 +5,15 @@ import { NaverAllCate } from "../models/NaverAllCate";
 import { MyCate } from "../models/MyCate";
 import { commerceApiBaseUrl, commerceCate, naverApiShopUrl, openApiBaseUrl } from "../contants/apiUrl";
 import { createTokenService } from "./tokenService";
-const qs = require('querystring');
 
-const getNaverAllCate = async () => {
+// 모든 네이버 카테 조회 서비스
+const getAllNaverAllCate = async () => {
   try {
     const naverAllCate = await NaverAllCate.find({});
     return naverAllCate
 
   } catch (error) {
-    console.error("getNaverAllCate 서비스 오류: ", error.response.data || error.message);
+    console.error("getAllNaverAllCate 서비스 오류: ", error.response.data || error.message);
   }
 }
 
@@ -88,7 +88,6 @@ export const getPopularCateService = async (keyword) => {
       categoryCounts[nonEmptyCategories] = (categoryCounts[nonEmptyCategories] || 0) + 1;
     });
 
-    
     // 키워드 검색에 의해 생성된 네이버 TOP3 카테고리
     const sortedCategories = Object.entries(categoryCounts)
       .sort((a, b) => b[1] - a[1])
@@ -96,7 +95,7 @@ export const getPopularCateService = async (keyword) => {
       .map(([category]) => category);
 
     // 네이버 전체 카테고리
-    const naverAllCate = await getNaverAllCate();
+    const naverAllCate = await getAllNaverAllCate();
 
     const findedCateArr = sortedCategories.map((cate) => {
       if(cate){
@@ -189,4 +188,15 @@ export const updateMyCateExcelService = async (file) => {
   } catch (error) {
     console.error("updateMyCateExcel 서비스 오류: ", error.response.data || error.message);
   }
-}
+};
+
+// 모든 마이 카테고리 조회 서비스
+export const getAllMyCateService = async () => {
+  try {
+    const allMyCate = await MyCate.find({});
+    return allMyCate
+
+  } catch (error) {
+    console.error("getAllMyCateService 서비스 오류: ", error.response.data || error.message);
+  }
+};

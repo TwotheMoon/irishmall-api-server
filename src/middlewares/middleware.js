@@ -24,6 +24,6 @@ export const whitelist = async (req, callback) => {
       callback(new Error("Not allowed by CORS"));
     }
   } catch (error) {
-    callback(err);
+    callback(error);
   }
 }

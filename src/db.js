@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const username = encodeURIComponent('dlaguddh1');
 const password = encodeURIComponent('Rjqnrdl94');
 const host = 'mongoDB';
+const testHost = '192.168.50.103';
 const port = '27017';
 const database = 'MoonDB';
 const testDbBase = "MoonDB_test";
@@ -11,7 +12,7 @@ const testDbBase = "MoonDB_test";
 const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
 
 // Test DB
-// const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`; 
+// const dbConnectUrl = `mongodb://${username}:${password}@${testHost}:${port}/${testDbBase}?authSource=admin`; 
 
 mongoose.connect(dbConnectUrl);
 
