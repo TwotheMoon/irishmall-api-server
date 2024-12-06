@@ -8,10 +8,10 @@ const database = 'MoonDB';
 const testDbBase = "MoonDB_test";
 
 // Main DB
-// const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
+const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
 
 // Test DB
-const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`; 
+// const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`; 
 
 mongoose.connect(dbConnectUrl);
 
