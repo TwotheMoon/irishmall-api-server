@@ -22,6 +22,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -p 2233 dlaguddh1@125.133.33.2 << EOF
             cd /volume1/docker/md-api-server/irishmall-api-server
             git pull origin main
+            npm install
             npm run build
           EOF
 

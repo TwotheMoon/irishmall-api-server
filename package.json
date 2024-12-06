@@ -2,8 +2,8 @@
   "name": "irishmall-api-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "node dist/init.js",
-    "dev": "nodemon --exec babel-node src/init.js",
+    "start": "NODE_ENV=production node dist/init.js",
+    "dev": "NODE_ENV=development nodemon --exec babel-node src/init.js",
     "build": "babel src -d dist"
   },
   "description": "",

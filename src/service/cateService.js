@@ -21,29 +21,34 @@ const getAllNaverAllCate = async () => {
 export const updateNaverAllCateBatch = async () => {
   try {
     const { access_token } = await createTokenService();
+    if (!access_token) {
+      throw new Error('토큰 생성 실패');
+    }
 
     const res = await axios({
       method: 'get',
-      url: commerceApiBaseUrl + commerceCate,
+      url: `${commerceApiBaseUrl}${commerceCate}`,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${access_token}`
       }
     });
 
-    const resData = res.data;
-
-    const allCate = resData.map((data) => ({
-      id: data.id || "",
-      wholeCategoryName: data.wholeCategoryName || ""
+    const allCate = res.data.map(({ id = "", wholeCategoryName = "" }) => ({
+      id,
+      wholeCategoryName
     }));
 
-    await NaverAllCate.deleteMany();
-    await NaverAllCate.insertMany(allCate);
-    console.log(`최신 네이버 카테고리 갱신 성공✅`);
+    await Promise.all([
+      NaverAllCate.deleteMany(),
+      NaverAllCate.insertMany(allCate)
+    ]);
+
+    console.log('최신 네이버 카테고리 갱신 성공✅');
     return true;
   } catch (error) {
-    console.error("updateNaverAllCateBatch 서비스 오류: ", error.response.data || error.message);
+    console.error("updateNaverAllCateBatch 서비스 오류:", error.response?.data || error.message);
+    return false;
   }
 };
 
@@ -72,7 +77,7 @@ export const getPopularCateService = async (keyword) => {
     });
 
     // openAPI 검색 상품 50개 중 탑3 선택
-    const topN = 3;
+    const TOP_N = 3;
     const productsArr = keywordRes.data.items;
     const categoryCounts = {};
 
@@ -91,7 +96,7 @@ export const getPopularCateService = async (keyword) => {
     // 키워드 검색에 의해 생성된 네이버 TOP3 카테고리
     const sortedCategories = Object.entries(categoryCounts)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, topN)
+      .slice(0, TOP_N)
       .map(([category]) => category);
 
     // 네이버 전체 카테고리
@@ -180,8 +185,10 @@ export const updateMyCateExcelService = async (file) => {
 
     const transformedData = sheetData.map((row) => transformRow(row, keyMaaping));
 
-    await MyCate.deleteMany();
-    await MyCate.insertMany(transformedData);
+    await Promise.all([
+      MyCate.deleteMany(),
+      MyCate.insertMany(transformedData)
+    ]);
     
     return true;
 

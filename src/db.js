@@ -1,18 +1,19 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const username = encodeURIComponent('dlaguddh1');
-const password = encodeURIComponent('Rjqnrdl94');
-const host = 'mongoDB';
-const testHost = '192.168.50.103';
-const port = '27017';
-const database = 'MoonDB';
-const testDbBase = "MoonDB_test";
+dotenv.config({
+  path: process.env.NODE_ENV === "production" 
+    ? ".env.production" 
+    : ".env.development"
+});
 
-// Main DB
+const username = encodeURIComponent(process.env.MONGODB_USERNAME);
+const password = encodeURIComponent(process.env.MONGODB_PASSWORD);
+const host = process.env.MONGODB_HOST;
+const port = process.env.MONGODB_PORT;
+const database = process.env.MONGODB_DATABASE;
+
 const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
-
-// Test DB
-// const dbConnectUrl = `mongodb://${username}:${password}@${testHost}:${port}/${testDbBase}?authSource=admin`; 
 
 mongoose.connect(dbConnectUrl);
 

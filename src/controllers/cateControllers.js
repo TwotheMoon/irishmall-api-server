@@ -10,9 +10,10 @@ import {
 export const updateNaverAllCateController = async (req, res) => {
   try {
     const result = await updateNaverAllCateBatch();
-    if (result) handleSuccess(res, null, "네이버 카테고리를 업데이트했습니다.");
-    else handleError(res, new Error("네이버 카테 업데이트 실패"), "네이버 카테고리 업데이트를 실패했습니다.");
-
+    if (!result) {
+      return handleError(res, new Error("네이버 카테 업데이트 실패"), "네이버 카테고리 업데이트를 실패했습니다.");
+    }
+    handleSuccess(res, null, "네이버 카테고리를 업데이트했습니다.");
   } catch (error) {
     handleError(res, error, "네이버 카테고리 업데이트 컨트롤러 오류");
   }
@@ -43,7 +44,7 @@ export const updateMyCateExcelController = async (req, res) => {
     else handleError(res, new Error("마이 카테 업데이트 실패"), "마이 카테고리 업데이트를 실패했습니다.");
     
   } catch (error) {
-    handleError(res, error, "마이 카테고리 업데이트 컨트롤러 오류");
+    handleError(res, error, "마이 카테고리 업데이트 컨���롤러 오류");
   }
 };
 
