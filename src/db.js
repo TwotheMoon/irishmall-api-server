@@ -7,10 +7,10 @@ const port = '27017';
 const database = 'MoonDB';
 const testDbBase = "MoonDB_test";
 
-// 메인 DB
+// Main DB
 // const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`;
 
-// 테스트 DB
+// Test DB
 const dbConnectUrl = `mongodb://${username}:${password}@${host}:${port}/${testDbBase}?authSource=admin`; 
 
 mongoose.connect(dbConnectUrl);
