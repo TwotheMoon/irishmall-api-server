@@ -4,12 +4,9 @@ import "./models/MyCate";
 import "./models/WhiteList";
 import app from "./server"
 
-const fs = require('fs');
-const https = require('https');
-const path = require('path');
-
-const __filename = __filename || path.resolve(process.cwd(), __filename);
-const __dirname = path.dirname(__filename);
+import fs from "fs";
+import https from "https";
+import path from "path";
 
 const PORT = 433;
 
