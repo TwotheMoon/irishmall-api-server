@@ -3,11 +3,18 @@ import "./models/NaverAllCate";
 import "./models/MyCate";
 import "./models/WhiteList";
 import app from "./server"
+import fs from "fs";
+import https from "https";
 
-const PORT = 4000;
+const PORT = 433;
+
+const options = {
+  key: fs.readFileSync('./keys/private.pem'),
+  cert: fs.readFileSync('./keys/public.pem'),
+}
 
 const handleListening = () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on https://localhost:${PORT}`);
 };
 
-app.listen(PORT, handleListening);
+https.createServer(options, app).listen(PORT, handleListening);
