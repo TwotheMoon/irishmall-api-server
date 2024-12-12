@@ -1,12 +1,22 @@
 import morgan from "morgan";
 import multer from "multer";
 import { WhiteList } from "../models/WhiteList";
+import path from 'path';
 
 // 로그
 export const logger = morgan("dev");
 
 // 업로드
-export const uploadMycateMulter = multer({ dest: "uploads/mycate"});
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../uploads/navercate'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  },
+});
+
+export const uploadMycateMulter = multer({ storage });
 
 // ip whitelist
 export const whitelist = async (req, callback) => {

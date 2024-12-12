@@ -34,15 +34,18 @@ export const updateNaverAllCateBatch = async () => {
       }
     });
 
+    if (!res.data || res.data.length === 0) {
+      throw new Error('API 응답 데이터가 비어 있습니다.');
+    }
+    
     const allCate = res.data.map(({ id = "", wholeCategoryName = "" }) => ({
       id,
       wholeCategoryName
     }));
 
-    await Promise.all([
-      NaverAllCate.deleteMany(),
-      NaverAllCate.insertMany(allCate)
-    ]);
+    await NaverAllCate.deleteMany().then(async () => {
+      await NaverAllCate.insertMany(allCate);
+    });
 
     console.log('최신 네이버 카테고리 갱신 성공✅');
     return true;
@@ -51,12 +54,6 @@ export const updateNaverAllCateBatch = async () => {
     return false;
   }
 };
-
-            // 분 시 일 월 요일
-cron.schedule("0 9 * * *", () => {
-  console.log("네이버 카테고리 업데이트 배치 실행");
-  updateNaverAllCateBatch();
-}, { timezone: "Asia/Seoul" });
 
 // 인기 카테고리 topN 서비스
 export const getPopularCateService = async (keyword) => {  
@@ -185,10 +182,9 @@ export const updateMyCateExcelService = async (file) => {
 
     const transformedData = sheetData.map((row) => transformRow(row, keyMaaping));
 
-    await Promise.all([
-      MyCate.deleteMany(),
-      MyCate.insertMany(transformedData)
-    ]);
+    await MyCate.deleteMany().then( async () => { 
+      await MyCate.insertMany(transformedData);
+    });
     
     return true;
 
@@ -207,3 +203,11 @@ export const getAllMyCateService = async () => {
     console.error("getAllMyCateService 서비스 오류: ", error.response.data || error.message);
   }
 };
+
+// 배치
+// 분 시 일 월 요일
+cron.schedule("0 9 * * *", () => {
+  console.log("네이버 카테고리 업데이트 배치 실행");
+  updateNaverAllCateBatch();
+}, { timezone: "Asia/Seoul" });
+            
