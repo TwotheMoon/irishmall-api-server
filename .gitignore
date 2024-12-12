@@ -2,5 +2,5 @@
 /dist
 .env
 /keys
-/uploads
 /temp
+/uploads 

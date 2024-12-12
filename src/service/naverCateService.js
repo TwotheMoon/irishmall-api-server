@@ -120,7 +120,7 @@ export const uploadNaverCateExcelService = async (filePath, rowRange, req) => {
     XLSX.writeFile(newWorkbook, savePath);
 
     // 절대 URL로 변경
-    const protocol = req.protocol;
+    const protocol = "http"
     const host = req.get('host');
     const downloadUrl = `${protocol}://${host}/uploads/navercate/${fileName}`;
 
