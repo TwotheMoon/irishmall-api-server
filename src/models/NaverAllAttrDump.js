@@ -6,4 +6,4 @@ const naverAllAttrDumpSchema = new mongoose.Schema({
   itHasAttr: Boolean
 });
 
-export const NaverAllAttrDump = mongoose.model("NaverAllAttrDump", naverAllAttrDumpSchema);
+export const NaverAllAttrDump = mongoose.model("naver_all_attr_dump", naverAllAttrDumpSchema);

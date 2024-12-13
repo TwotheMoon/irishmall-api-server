@@ -11,4 +11,4 @@ const myCateSchema = new mongoose.Schema({
   kCate: String,
 });
 
-export const MyCate = mongoose.model("MyCates", myCateSchema);
+export const MyCate = mongoose.model("my_cate", myCateSchema);

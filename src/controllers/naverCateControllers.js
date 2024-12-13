@@ -1,5 +1,34 @@
-import { attrTestService2, attrTestService3, updateNaverCateAttrService, uploadNaverCateExcelService } from "../service/naverCateService";
+import { handleError, handleSuccess } from "../contants/errorHandleing";
+import { updateNaverCateAttrService, uploadNaverCateExcelService, getPopularCateService, updateNaverAllCateBatch } from "../service/naverCateService";
 
+
+// 네이버 All 카테고리 update 컨트롤러
+export const updateNaverAllCateController = async (req, res) => {
+  try {
+    const result = await updateNaverAllCateBatch();
+    if (!result) {
+      return handleError(res, new Error("네이버 카테 업데이트 실패"), "네이버 카테고리 업데이트를 실패했습니다.");
+    }
+    handleSuccess(res, null, "네이버 카테고리를 업데이트했습니다.");
+  } catch (error) {
+    handleError(res, error, "네이버 카테고리 업데이트 컨트롤러 오류");
+  }
+};
+
+// 네이버 인기 카테고리 검색 컨트롤러
+export const getPopularCateController = async (req, res) => {
+  try {
+    const keyword = req.body.data;
+    const popularCate = await getPopularCateService(keyword);
+    if (popularCate) handleSuccess(res, popularCate, "인기 카테고리 조회에 성공했습니다.");
+    else handleError(res, new Error("인기 카테 조회 실패"), "인기 카테고리 조회에 실패했습니다.");
+
+  } catch (error) {
+    handleError(res, error, "인기 카테고리 조회 컨트롤러 오류");
+  }
+};
+
+// 네이버 카테고리 엑셀 업로드 컨트롤러
 export const uploadNaverCateExcelController = async (req, res) => {
   try {
     if (!req.file) {
@@ -28,10 +57,11 @@ export const uploadNaverCateExcelController = async (req, res) => {
 
 export const updateNaverCateAttrController = async (req, res) => {
   try {
-    await updateNaverCateAttrService();
-    return res.end();
+    const result = await updateNaverCateAttrService();
+    if(result) handleSuccess(res, null, "네이버 속성 업데이트 완료");
+    else handleError(res, new Error("네이버 속성 업데이트 실패"), "네이버 속성 업데이트 실패");
   } catch (error) {
-    console.log(error);
+    handleError(res, error, "네이버 속성 업데이트 컨트롤러 오류");
   }
 };  
 

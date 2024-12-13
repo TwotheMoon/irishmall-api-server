@@ -16,10 +16,11 @@ export const healthCkController = async (req, res) => {
   res.json(data);
 };
 
-
+// NAS 로그 컨트롤러
 export const getNasLogController = async (req, res) => {
-  const logs = await axios.get("http://125.133.33.2:3033/api/datasources/proxy/1/query", {
-    headers: {
+  try {
+    const logs = await axios.get("http://125.133.33.2:3033/api/datasources/proxy/1/query", {
+      headers: {
       Cookie: "grafana_session=921f84a85dda28b8393efe668d008f11",
     },
     params: {
@@ -38,8 +39,11 @@ export const getNasLogController = async (req, res) => {
         GROUP BY "hostname", "appname"
       `.trim(),
       epoch: "ms",
-    },
-  });
+      },
+    }); 
 
-  res.json(logs.data.results);
-}
+    res.json(logs.data.results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import { logger, uploadMycateMulter, whitelist } from "./middlewares/middleware";
 import { getNasLogController, healthCkController, rootController } from "./controllers/baseControllers";
-import { getAllMyCateController, getPopularCateController, updateMyCateExcelController, updateNaverAllCateController } from "./controllers/cateControllers";
+import { getAllMyCateController, updateMyCateExcelController } from "./controllers/cateControllers";
 import { createWhiteListController, deleteWhiteListController, readWhiteListController, updateWhiteListController } from "./controllers/whiteListControllers";
-import { updateNaverCateAttrController, uploadNaverCateExcelController } from "./controllers/naverCateControllers";
+import { getPopularCateController, updateNaverAllCateController, updateNaverCateAttrController, uploadNaverCateExcelController } from "./controllers/naverCateControllers";
 import path from 'path';
 require('dotenv').config();
 

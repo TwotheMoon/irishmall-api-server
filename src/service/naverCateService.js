@@ -1,11 +1,154 @@
 import axios from "axios";
-import { commerceApiBaseUrl } from "../contants/apiUrl";
+import cron from "node-cron";
+import { commerceApiBaseUrl, commerceCate, naverApiShopUrl, openApiBaseUrl } from "../contants/apiUrl";
 import { createTokenService } from "./tokenService";
 import { NaverAllCate } from "../models/NaverAllCate";
-import { NaverAllAttr } from "../models/NaverAllAttr";
 import * as XLSX from 'xlsx';
 import path from 'path';
 import fs from 'fs';
+import { MyCate } from "../models/MyCate";
+import { getAllMyCateService } from "./cateService";
+
+
+// 네이버 카테고리 update 배치
+export const updateNaverAllCateBatch = async () => {
+  try {
+    const { access_token } = await createTokenService();
+    if (!access_token) {
+      throw new Error('토큰 생성 실패❌');
+    }
+
+    const res = await axios({
+      method: 'get',
+      url: `${commerceApiBaseUrl}${commerceCate}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+
+    if (!res.data || res.data.length === 0) {
+      throw new Error('API 응답 데이터가 비어 있습니다.');
+    }
+    
+    const allCate = res.data.map(({ id = "", wholeCategoryName = "" }) => ({
+      id,
+      wholeCategoryName
+    }));
+
+    for (const cate of allCate) {
+      await NaverAllCate.updateOne(
+        { categoryId: cate.id },
+        { 
+          wholeCategoryName: cate.wholeCategoryName 
+        },
+        { upsert: true }
+      );
+    }
+
+    console.log('최신 네이버 카테고리 갱신 성공✅');
+    return true;
+  } catch (error) {
+    console.error("updateNaverAllCateBatch 서비스 오류❌:", error.response?.data || error.message);
+    return false;
+  }
+};
+
+// 인기 카테고리 topN 서비스
+export const getPopularCateService = async (keyword) => {  
+  try {
+    const keywordRes = await axios ({
+      method: 'get',
+      url: openApiBaseUrl + naverApiShopUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Naver-Client-Id': process.env.NAVER_OPEN_API_ID,
+        'X-Naver-Client-Secret': process.env.NAVER_OPEN_API_SECRET,
+      },
+      params: {
+        'query': keyword,
+        'display': 50,
+        'exclude': "used:rental:cbshop",
+      }
+    });
+
+    // openAPI 검색 상품 50개 중 탑3 선택
+    const TOP_N = 3;
+    const productsArr = keywordRes.data.items;
+    const categoryCounts = {};
+
+    productsArr.forEach((item) => {
+      const categoriesForm = [
+        item.category1 || "",
+        item.category2 || "",
+        item.category3 || "",
+        item.category4 || "",
+      ];
+
+      const nonEmptyCategories = categoriesForm.filter((category) => category).join(">");
+      categoryCounts[nonEmptyCategories] = (categoryCounts[nonEmptyCategories] || 0) + 1;
+    });
+
+    // 키워드 검색에 의해 생성된 네이버 TOP3 카테고리
+    const sortedCategories = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, TOP_N)
+      .map(([category]) => category);
+
+    // 네이버 전체 카테고리
+    const naverAllCate = await NaverAllCate.find({});
+
+    const findedCateArr = sortedCategories.map((cate) => {
+      if(cate){
+        const match = naverAllCate.find((item) => item.wholeCategoryName.includes(cate));
+        if(match) {
+          return {
+            id: match.categoryId,
+            wholeCategoryName: match.wholeCategoryName,
+          }
+        }
+      };
+      return {
+        categoryId: "",
+        wholeCategoryName: ""
+      }
+    });
+
+    console.log(findedCateArr);
+
+    // 마이카테 매핑
+    const resultArr = await Promise.all(
+      findedCateArr.map( async (item) => {
+        if(!item.id) {
+          return {
+            categoryId: "",
+            wholeCategoryName: "",
+            matchingCate: []
+          };
+        }
+
+        const matchingDocs = await MyCate.find({ naverCate: item.id });
+
+        const matchingCate = matchingDocs.map((doc) => ({
+          cateName: doc.cateName || "",
+          myCate: doc.myCate || "",
+          naverCate: doc.naverCate || ""
+        }));
+
+        return {
+          id: item.id || "",
+          wholeCategoryName: item.wholeCategoryName || "",
+          matchingCate: matchingCate || [],
+        };
+      })
+    );
+
+    return resultArr;
+
+  } catch (error) {
+    console.error("getPopularCateService 서비스 오류: ", error.response.data || error.message);
+  }
+};
 
 // 컬럼 최대 너비 계산 함수
 const calculateMaxColumnWidths = (data) => {
@@ -58,12 +201,12 @@ export const uploadNaverCateExcelService = async (filePath, rowRange, req) => {
       endRow = rowRange.end;
     }
 
-    // NaverAllAttr 데이터 가져오기
-    const naverAllAttrs = await NaverAllAttr.find({});
+    // NaverAllCate 데이터 가져오기
+    const naverAllCate = await NaverAllCate.find({});
     const myCateAttrMap = new Map();
 
-    // 모든 NaverAllAttr 데이터를 통해 myCate와 itHasAttr 매핑
-    naverAllAttrs.forEach(attr => {
+    // 모든 naverAllCate 데이터를 통해 myCate와 itHasAttr 매핑
+    naverAllCate.forEach(attr => {
       if (attr.myCate && Array.isArray(attr.myCate)) {
         attr.myCate.forEach(myCate => {
           if (!myCateAttrMap.has(myCate)) {
@@ -137,15 +280,20 @@ export const uploadNaverCateExcelService = async (filePath, rowRange, req) => {
 // 최신 네이버 카테 속성 업데이트 서비스
 export const updateNaverCateAttrService = async () => {
   try {
-    const naverAllCate = await NaverAllCate.find({});
+    await updateNaverAllCateBatch().then(() => console.log("네이버 카테고리 사전 업데이트 완료✅"));
+    await getAllMyCateService();
 
-    const { access_token } = await createTokenService();
+    const naverAllCate = (await NaverAllCate.find({}));
+    const myAllCate = await MyCate.find({});
+
+    let { access_token } = await createTokenService();
     if (!access_token) {
-      throw new Error('토큰 생성 실패');
+      throw new Error('토큰 생성 실패❌');
     }
 
     for (let i = 0; i < naverAllCate.length; i++) {
       const category = naverAllCate[i];
+      console.log(`${i}번째 카테고리 속성 업데이트 시작: categoryId=${category.categoryId}`);
       try {
         const res = await axios({
           method: 'get',
@@ -155,35 +303,82 @@ export const updateNaverCateAttrService = async () => {
             'Authorization': `Bearer ${access_token}`
           },
           params: {
-            categoryId: category.id
+            categoryId: category.categoryId
           }
         });
 
-        if (res.data) {
-          await NaverAllAttr.create({
-            categoryId: category.id,
-            wholeCategoryName: category.wholeCategoryName,
-            itHasAttr: true
-          });
+        if (res.status === 200) {
+          const filteredMyCate = myAllCate
+            .filter(cate => String(cate.naverCate) === String(category.categoryId))
+            .map(cate => cate.myCate);
+
+          try {
+            await NaverAllCate.updateOne(
+              { categoryId: category.categoryId },
+              {
+                wholeCategoryName: category.wholeCategoryName,
+                itHasAttr: true,
+                myCate: filteredMyCate
+              },
+              { upsert: true }
+            );
+            console.log(`${category.categoryId} 속성 업데이트 true ✅`);
+          } catch (dbError) {
+            console.error(`DB 업데이트 에러 (${category.categoryId}):`, dbError);
+          }
+        } else {
+          try {
+            // myCate 업데이트 시에도 필요한 데이터만 필터링
+            const filteredMyCate = myAllCate
+              .filter(cate => String(cate.naverCate) === String(category.categoryId))
+              .map(cate => cate.myCate);
+
+            await NaverAllCate.updateOne(
+              { categoryId: category.categoryId },
+              {
+                myCate: filteredMyCate
+              },
+              { upsert: true }
+            );
+            console.log(`${category.categoryId} 속성 업데이트 false ✅`);
+          } catch (dbError) {
+            console.error(`DB 업데이트 에러 (${category.categoryId}):`, dbError);
+          }
         }
       } catch (error) {
-        if(error.status === 401 || error.code === 'GW.AUTHN') {
-          console.log('토큰 만료')
-          await createTokenService();
+        if (error.response?.status === 401 || error.code === 'GW.AUTHN') {
+          console.log('토큰 만료');
+          const newToken = await createTokenService();
+          access_token = newToken.access_token;
+          i--; // 현재 인덱스 재시도
         } else {
-          console.log(`Error processing category ID ${category.id}:`, error);
-          await NaverAllAttr.create({
-            categoryId: category.id,
-            wholeCategoryName: category.wholeCategoryName,
-            itHasAttr: false
-          });
+          console.log(`에러 처리 중 ${category.categoryId}:`, error.status);
+          await NaverAllCate.updateOne(
+            { categoryId: category.categoryId },
+            {
+              wholeCategoryName: category.wholeCategoryName,
+              itHasAttr: false
+            },
+            { upsert: true }
+          );
         }
       }
 
-      // 1.5초 대기
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // 1초 대기
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
+
+    console.log("네이버 카테고리 속성 업데이트 완료✅");
+    return true;
   } catch (error) {
-    console.log("전체 처리 중 에러 발생:", error);
+    console.log("전체 처리 중 에러 발생❌:", error);
+    return false;
   }
 };
+
+// ------------ 배치 ------------
+// 분 시 일 월 요일
+cron.schedule("30 8 * * *", () => {
+  console.log("네이버 카테고리 업데이트 배치 실행");
+  updateNaverAllCateBatch();
+}, { timezone: "Asia/Seoul" });
