@@ -21,7 +21,7 @@ export const uploadMycateMulter = multer({ storage });
 // ip whitelist
 export const whitelist = async (req, callback) => {
   const origin = req.header('Origin');
-  console.log("리퀘스트", origin);
+  console.log("요청: ", origin);
   if(!origin) return callback(null, { origin: false });
 
   try {
