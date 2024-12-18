@@ -6,6 +6,7 @@ import { getAllMyCateController, updateMyCateExcelController } from "./controlle
 import { createWhiteListController, deleteWhiteListController, readWhiteListController, updateWhiteListController } from "./controllers/whiteListControllers";
 import { getPopularCateController, updateNaverAllCateController, updateNaverCateAttrController, uploadNaverCateExcelController } from "./controllers/naverCateControllers";
 import path from 'path';
+import { testController } from "./controllers/testControllers";
 require('dotenv').config();
 
 const app = express();
@@ -34,5 +35,8 @@ app.post('/createWitelist', createWhiteListController);
 app.post('/readeWitelist', readWhiteListController);
 app.post('/updateWitelist', updateWhiteListController);
 app.post('/deleteWitelist', deleteWhiteListController);
+
+// 테스트 EP
+app.post('/test', testController);
 
 export default app;

@@ -4,7 +4,7 @@ import { commerceApiBaseUrl, commerceToken } from "../contants/apiUrl";
 const qs = require('querystring');
 
 // 토큰 자격증명 생성
-export const createSignatureService = async (client_id, client_secret, timestamp) => {
+const createSignatureService = async (client_id, client_secret, timestamp) => {
   const password = `${client_id}_${timestamp}`;
   const hashed = bcrypt.hashSync(password, client_secret);
   const base64Signature = Buffer.from(hashed, "utf-8").toString('base64');
