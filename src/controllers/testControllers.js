@@ -1,6 +1,5 @@
 import { handleError, handleSuccess } from "../contants/errorHandleing";
-import { getAdKeywordService } from "../service/adKeywordToolService";
-import { testService } from "../service/testService";
+import { getAdKeywordService } from "../service/adKeywordService";
 
 export const testController = async (req, res) => {
   try {

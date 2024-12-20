@@ -11,3 +11,4 @@ export const commerceToken = "/external/v1/oauth2/token";
 export const commerceCate = "/external/v1/categories";
 
 export const adKeywordTool = "/keywordstool";
+export const adManagedKeyword = "/ncc/managedKeyword";
