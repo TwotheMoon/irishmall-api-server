@@ -16,7 +16,7 @@ export const updateMyCateExcelService = async (file) => {
       const transformed = {};
       for (const [excelKey, dbKey] of Object.entries(mapping)) {
         if (row[excelKey] !== undefined) {
-          transformed[dbKey] = row[excelKey];
+          transformed[dbKey] = String(row[excelKey]);
         }
       }
       return transformed;
@@ -34,6 +34,8 @@ export const updateMyCateExcelService = async (file) => {
     } 
 
     const transformedData = sheetData.map((row) => transformRow(row, keyMaaping));
+
+    console.log(transformedData.filter(data => data.naverCate == "50016200"))
 
     const naverAllAttrs = await NaverAllCate.find({});
 

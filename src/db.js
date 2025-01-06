@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 if (process.env.NODE_ENV !== "production") {
+  console.log("Connected Test DB")
   dotenv.config();
 }
 
@@ -18,7 +19,7 @@ mongoose.connect(dbConnectUrl);
 const db = mongoose.connection;
 
 const handleError = (error) => console.log("DB error ❌", error);
-const handleOpen = () => console.log("Connected to DB ✅");
+const handleOpen = () => console.log(`Connected to ${database} ✅`);
 
 db.on("error", handleError);
 db.once("open", handleOpen);
