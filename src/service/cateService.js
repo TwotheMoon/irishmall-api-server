@@ -12,6 +12,7 @@ export const updateMyCateExcelService = async (file) => {
     const sheetName = workbook.SheetNames[0];
     const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
+    // 엑셀 행 데이터 변환
     const transformRow = (row, mapping) => {
       const transformed = {};
       for (const [excelKey, dbKey] of Object.entries(mapping)) {
@@ -35,10 +36,9 @@ export const updateMyCateExcelService = async (file) => {
 
     const transformedData = sheetData.map((row) => transformRow(row, keyMaaping));
 
-    console.log(transformedData.filter(data => data.naverCate == "50016200"))
-
     const naverAllAttrs = await NaverAllCate.find({});
 
+    // 네이버 카테고리 DB myCate DB 비교 후 업데이트 동기화
     naverAllAttrs.forEach(attr => {
       attr.myCate = transformedData
         .filter(data => data.naverCate === attr.categoryId)
