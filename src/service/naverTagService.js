@@ -8,7 +8,8 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.connect({
-    browserWSEndpoint: 'ws://localhost:3003',
+    browserWSEndpoint: 'ws://browserless-chrome-1:3003',
+    // browserWSEndpoint: 'ws://localhost:3003',
     headless: true, // 브라우저가 보이지 않게 실행
     args: [
       '--no-sandbox',
