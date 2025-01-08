@@ -1,13 +1,13 @@
-import puppeteer from 'puppeteer-extra';
+import puppeteer from 'puppeteer-core';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 // Stealth 플러그인 사용
-puppeteer.use(StealthPlugin());
+// puppeteer.use(StealthPlugin());
 
 // 네이버태그 검색 조회 서비스
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
-  const browser = await puppeteer.launch({
+  const browser = await puppeteer.connect({
     browserWSEndpoint: 'ws://localhost:3003',
     headless: true, // 브라우저가 보이지 않게 실행
     args: [
