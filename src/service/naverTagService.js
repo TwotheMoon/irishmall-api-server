@@ -26,9 +26,12 @@ export const getSearchNaverTagService = async (keyword) => {
     const page = await browser.newPage();
 
     // 사용자 에이전트 설정
+    // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+    //   'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+    //   'Chrome/85.0.4183.102 Safari/537.36');
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
       'AppleWebKit/537.36 (KHTML, like Gecko) ' +
-      'Chrome/85.0.4183.102 Safari/537.36');
+      'Chrome/121.0.6167.85 Safari/537.36');
 
     // 요청 헤더 설정
     await page.setExtraHTTPHeaders({
