@@ -8,6 +8,7 @@ import { getPopularCateController, updateNaverAllCateController, updateNaverCate
 import path from 'path';
 import { testController } from "./controllers/testControllers";
 import { getAdKeywordController } from "./controllers/adKeywordControllers";
+import { getSearchNaverTagController } from "./controllers/naverTagControllers";
 require('dotenv').config();
 
 const app = express();
@@ -31,6 +32,7 @@ app.post('/getPopularCate', getPopularCateController)
 app.post('/uploadMyCateExcel', uploadMycateMulter.single("file"), updateMyCateExcelController)
 app.post('/uploadNaverCateExcel', uploadMycateMulter.single("file"), uploadNaverCateExcelController)
 app.post('/updateNaverCateAttr', updateNaverCateAttrController) // 최신 네이버 카테 속성 업데이트 배치
+app.post('/getSearchNaverTag', getSearchNaverTagController) // 네이버태그 검색 조회
 
 // 키워드 관련 EP
 app.post('/getAdKeyword', getAdKeywordController);
