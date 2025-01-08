@@ -47,6 +47,8 @@ export const getSearchNaverTagService = async (keyword) => {
     let nextDataContent;
     try {
       nextDataContent = await page.$eval('#__NEXT_DATA__', element => {
+        // TODO 라이브 여기 오류 콘솔찍어보기
+        console.log(element)
         return element.textContent;
       });
     } catch (error) {
