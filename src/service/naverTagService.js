@@ -42,11 +42,10 @@ export const getSearchNaverTagService = async (keyword) => {
     // 페이지 이동
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    console.log('페이지 이동 완료', page.content());
+    console.log('페이지 이동 완료', JSON.parse(page.content()));
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
-    console.log('파싱시작');
     try {
       nextDataContent = await page.$eval('#__NEXT_DATA__', element => {
         // TODO 라이브 여기 오류 콘솔찍어보기
