@@ -1,17 +1,15 @@
-
-// 네이버태그 검색 조회 서비스
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
+// Stealth 플러그인 사용
+puppeteer.use(StealthPlugin());
+
+// 네이버태그 검색 조회 서비스
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
-  
-  // Stealth 플러그인 사용 설정
-  puppeteer.use(StealthPlugin());
-
-  const browser = await puppeteer.connect({
-    browserWSEndpoint: 'ws://browserless-chrome-1:3003',
+  const browser = await puppeteer.launch({
     headless: true, // 브라우저가 보이지 않게 실행
+    executablePath: '/usr/bin/chromium',
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -30,7 +28,7 @@ export const getSearchNaverTagService = async (keyword) => {
     // 사용자 에이전트 설정
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
       'AppleWebKit/537.36 (KHTML, like Gecko) ' +
-      'Chrome/121.0.6167.85 Safari/537.36');
+      'Chrome/85.0.4183.102 Safari/537.36');
 
     // 요청 헤더 설정
     await page.setExtraHTTPHeaders({
@@ -38,27 +36,13 @@ export const getSearchNaverTagService = async (keyword) => {
     });
 
     // 페이지 이동
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    // 네이버 접근 제한 우회 시도
-    const isBlocked = await page.evaluate(() => {
-      return document.querySelector('body').innerText.includes('접근이 제한되었습니다');
-    });
-
-    if (isBlocked) {
-      console.error("네이버 접근이 제한되었습니다. 다른 방법을 시도하세요.");
-      await browser.close();
-      return false;
-    }
-
-    console.log("컨텐츠 크롤링 시작");
-    console.log(await page.content());
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
     try {
       nextDataContent = await page.$eval('#__NEXT_DATA__', element => {
-        console.log(element)
         return element.textContent;
       });
     } catch (error) {
