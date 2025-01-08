@@ -3,7 +3,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-// Start of Selection
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   
@@ -39,10 +38,21 @@ export const getSearchNaverTagService = async (keyword) => {
     });
 
     // 페이지 이동
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-    console.log("컨텐츠 크롤링 시작")
-    console.log(await page.content())
+    // 네이버 접근 제한 우회 시도
+    const isBlocked = await page.evaluate(() => {
+      return document.querySelector('body').innerText.includes('접근이 제한되었습니다');
+    });
+
+    if (isBlocked) {
+      console.error("네이버 접근이 제한되었습니다. 다른 방법을 시도하세요.");
+      await browser.close();
+      return false;
+    }
+
+    console.log("컨텐츠 크롤링 시작");
+    console.log(await page.content());
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
