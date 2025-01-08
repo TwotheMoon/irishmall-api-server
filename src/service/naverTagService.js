@@ -41,6 +41,7 @@ export const getSearchNaverTagService = async (keyword) => {
 
     // 페이지 이동
     await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(5000);
 
 
     // __NEXT_DATA__ 스크립트의 내용 추출
