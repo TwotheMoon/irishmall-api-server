@@ -8,45 +8,40 @@ puppeteer.use(StealthPlugin());
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     executablePath: '/usr/bin/chromium',
     args: [
       // 도커 환경에서 필수 옵션
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-      
+
       // 크롤링 감지 방지
       '--disable-blink-features=AutomationControlled',
-      
+
       // 리소스 최적화 (JS 데이터만 필요한 경우)
       '--disable-images',
       '--disable-css',
+      '--disable-javascript',
       '--disable-animations',
-      '--disable-extensions',
-      
+
       // 성능 최적화
       '--disable-background-networking',
       '--disable-background-timer-throttling',
       '--disable-backgrounding-occluded-windows',
-      
+
       // 메모리 사용 최적화
       '--disable-component-extensions-with-background-pages',
       '--disable-default-apps',
-      '--disable-gpu'
+      '--disable-gpu',
+
+      // 성능 개선을 위한 추가 옵션들
+      '--disable-web-security',      
     ]
   });
 
   try {
     const page = await browser.newPage();
-    await page.setRequestInterception(true);
-    page.on('request', (request) => {
-      if (['image', 'stylesheet', 'font', 'media'].includes(request.resourceType())) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
 
     // 사용자 에이전트 설정
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
@@ -59,12 +54,10 @@ export const getSearchNaverTagService = async (keyword) => {
     });
 
     // 페이지 이동
-    await page.goto(url, { 
-      waitUntil: 'networkidle2',
-    });
+    await page.goto(url, { waitUntil: 'domcontentloaded'});
     
     // #__NEXT_DATA__ 요소가 로드될 때까지만 대기
-    await page.waitForSelector('#__NEXT_DATA__', { timeout: 5000 });
+    await page.waitForSelector('#__NEXT_DATA__');
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
