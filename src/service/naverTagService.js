@@ -41,11 +41,7 @@ export const getSearchNaverTagService = async (keyword) => {
       '--no-first-run',
       '--start-maximized',
       '--disable-gpu'
-    ],
-    defaultViewport: {
-      width: 1920,
-      height: 1080
-    }
+    ]
   });
 
   try {
@@ -62,10 +58,10 @@ export const getSearchNaverTagService = async (keyword) => {
     });
 
     // 페이지 이동
-    await page.setDefaultNavigationTimeout(10000); // 10초 타임아웃 설정
+    // await page.setDefaultNavigationTimeout(10000); // 10초 타임아웃 설정
     await page.goto(url, { 
       waitUntil: 'networkidle2',
-      timeout: 10000 
+      // timeout: 10000 
     });
     
     // #__NEXT_DATA__ 요소가 로드될 때까지만 대기
