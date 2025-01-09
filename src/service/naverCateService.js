@@ -280,6 +280,7 @@ export const uploadNaverCateExcelService = async (filePath, rowRange, req) => {
 // 최신 네이버 카테 속성 업데이트 서비스
 export const updateNaverCateAttrService = async () => {
   try {
+    console.log("네이버 카테고리 사전 업데이트 시작");
     await updateNaverAllCateBatch().then(() => console.log("네이버 카테고리 사전 업데이트 완료✅"));
     await getAllMyCateService();
 
@@ -351,8 +352,8 @@ export const updateNaverCateAttrService = async () => {
           const newToken = await createTokenService();
           access_token = newToken.access_token;
           i--; // 현재 인덱스 재시도
-        } else {
-          console.log(`에러 처리 중 ${category.categoryId}:`, error.status);
+        } else { // false 인 경우
+          console.log(`false 처리 ${category.categoryId}:`, error.status);
           await NaverAllCate.updateOne(
             { categoryId: category.categoryId },
             {
@@ -364,8 +365,8 @@ export const updateNaverCateAttrService = async () => {
         }
       }
 
-      // 1초 대기
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 0.3초 대기
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
 
     console.log("네이버 카테고리 속성 업데이트 완료✅");
