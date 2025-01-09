@@ -8,7 +8,7 @@ puppeteer.use(StealthPlugin());
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: 'new',
     executablePath: '/usr/bin/chromium',
     args: [
       // 도커 환경에서 필수 옵션
@@ -20,10 +20,10 @@ export const getSearchNaverTagService = async (keyword) => {
       '--disable-blink-features=AutomationControlled',
 
       // 리소스 최적화 (JS 데이터만 필요한 경우)
-      '--disable-images',
-      '--disable-css',
-      '--disable-javascript',
-      '--disable-animations',
+      // '--disable-images',
+      // '--disable-css',
+      // '--disable-javascript',
+      // '--disable-animations',
 
       // 성능 최적화
       '--disable-background-networking',
@@ -52,6 +52,15 @@ export const getSearchNaverTagService = async (keyword) => {
     await page.setExtraHTTPHeaders({
       'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
     });
+
+    await page.setRequestInterception(true);
+      page.on('request', request => {
+        if (['stylesheet', 'image', 'font', 'media'].includes(request.resourceType())) {
+          request.abort();
+        } else {
+          request.continue();
+        }
+      });
 
     // 페이지 이동
     await page.goto(url, { waitUntil: 'domcontentloaded'});
