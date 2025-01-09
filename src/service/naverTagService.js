@@ -8,18 +8,44 @@ puppeteer.use(StealthPlugin());
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
-    headless: true, // 브라우저가 보이지 않게 실행
+    headless: true,
     executablePath: '/usr/bin/chromium',
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-blink-features=AutomationControlled',
-      '--disable-images', // 이미지를 로드하지 않도록 설정 (속도 향상)
-      '--start-maximized',
+      '--disable-images',
+      '--disable-css',
+      '--disable-javascript',
+      '--disable-animations',
+      '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-breakpad',
+      '--disable-client-side-phishing-detection',
+      '--disable-component-extensions-with-background-pages',
+      '--disable-default-apps',
       '--disable-extensions',
+      '--disable-features=TranslateUI',
+      '--disable-hang-monitor',
+      '--disable-ipc-flooding-protection',
+      '--disable-notifications',
+      '--disable-popup-blocking',
+      '--disable-prompt-on-repost',
+      '--disable-renderer-backgrounding',
+      '--disable-sync',
+      '--disable-web-security',
+      '--ignore-certificate-errors',
+      '--no-default-browser-check',
+      '--no-first-run',
+      '--start-maximized',
       '--disable-gpu'
     ],
+    defaultViewport: {
+      width: 1920,
+      height: 1080
+    }
   });
 
   try {
@@ -36,8 +62,14 @@ export const getSearchNaverTagService = async (keyword) => {
     });
 
     // 페이지 이동
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
-
+    await page.setDefaultNavigationTimeout(10000); // 10초 타임아웃 설정
+    await page.goto(url, { 
+      waitUntil: 'networkidle2',
+      timeout: 10000 
+    });
+    
+    // #__NEXT_DATA__ 요소가 로드될 때까지만 대기
+    await page.waitForSelector('#__NEXT_DATA__', { timeout: 5000 });
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
