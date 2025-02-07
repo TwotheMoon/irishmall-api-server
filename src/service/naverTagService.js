@@ -17,7 +17,8 @@ export const getSearchNaverTagService = async (keyword) => {
       '--disable-images', // 이미지를 로드하지 않도록 설정 (속도 향상)
       '--start-maximized',
       '--disable-extensions',
-      '--disable-gpu'
+      '--disable-gpu',
+      '--disable-web-security',
     ],
   });
 
@@ -36,7 +37,6 @@ export const getSearchNaverTagService = async (keyword) => {
 
     // 페이지 이동
     await page.goto(url, { waitUntil: 'domcontentloaded' });
-
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
