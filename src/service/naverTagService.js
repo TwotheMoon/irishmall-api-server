@@ -9,6 +9,7 @@ export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
     headless: true, // 브라우저가 보이지 않게 실행
+    executablePath: '/usr/bin/chromium', // NAS 에서 크롬 경로
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
