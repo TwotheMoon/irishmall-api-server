@@ -9,25 +9,33 @@ export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
     headless: true, // 브라우저가 보이지 않게 실행
-    executablePath: '/usr/bin/chromium', // NAS 에서 크롬 경로
+    // executablePath: '/usr/bin/chromium', // NAS 에서 크롬 경로
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-blink-features=AutomationControlled',
       '--disable-images', // 이미지를 로드하지 않도록 설정 (속도 향상)
-      '--start-maximized',
       '--disable-extensions',
       '--disable-gpu',
       '--disable-web-security',
-      '--disable-images',
-      '--disable-css',
       '--disable-animations',
     ],
   });
 
   try {
     const page = await browser.newPage();
+
+    // 요청 차단 설정
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const resourceType = req.resourceType();
+      if (['stylesheet', 'image', 'font', 'media'].includes(resourceType)) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
 
     // 사용자 에이전트 설정
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
