@@ -8,36 +8,21 @@ puppeteer.use(StealthPlugin());
 export const getSearchNaverTagService = async (keyword) => {
   const url = `https://search.shopping.naver.com/search/all?pagingSize=80&query=${encodeURIComponent(keyword)}`;
   const browser = await puppeteer.launch({
-    headless: 'new',
-    executablePath: '/usr/bin/chromium',
+    headless: true, // 브라우저가 보이지 않게 실행
     args: [
-      // 도커 환경에서 필수 옵션
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-
-      // 크롤링 감지 방지
       '--disable-blink-features=AutomationControlled',
-
-      // 리소스 최적화 (JS 데이터만 필요한 경우)
-      // '--disable-images',
-      // '--disable-css',
-      // '--disable-javascript',
-      // '--disable-animations',
-
-      // 성능 최적화
-      '--disable-background-networking',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-
-      // 메모리 사용 최적화
-      '--disable-component-extensions-with-background-pages',
-      '--disable-default-apps',
+      '--disable-images', // 이미지를 로드하지 않도록 설정 (속도 향상)
+      '--start-maximized',
+      '--disable-extensions',
       '--disable-gpu',
-
-      // 성능 개선을 위한 추가 옵션들
-      '--disable-web-security',      
-    ]
+      '--disable-web-security',
+      '--disable-images',
+      '--disable-css',
+      '--disable-animations',
+    ],
   });
 
   try {
@@ -53,20 +38,8 @@ export const getSearchNaverTagService = async (keyword) => {
       'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
     });
 
-    await page.setRequestInterception(true);
-      page.on('request', request => {
-        if (['stylesheet', 'image', 'font', 'media'].includes(request.resourceType())) {
-          request.abort();
-        } else {
-          request.continue();
-        }
-      });
-
     // 페이지 이동
-    await page.goto(url, { waitUntil: 'domcontentloaded'});
-    
-    // #__NEXT_DATA__ 요소가 로드될 때까지만 대기
-    await page.waitForSelector('#__NEXT_DATA__');
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
 
     // __NEXT_DATA__ 스크립트의 내용 추출
     let nextDataContent;
