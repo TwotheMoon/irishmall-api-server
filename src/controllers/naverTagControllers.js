@@ -11,7 +11,6 @@ export const getSearchNaverTagController = async (req, res) => {
     const result = await getSearchNaverTagService(keyword);
     if (result) handleSuccess(res, result, "네이버태그 조회를 성공했습니다.");
     else handleError(res, new Error("네이버태그 조회 실패"), "네이버태그 조회를 실패했습니다.");
-    console.log(result)
 
   } catch (error) {
     handleError(res, error, "네이버태그 조회 컨트롤러 오류");
