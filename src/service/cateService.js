@@ -24,14 +24,13 @@ export const updateMyCateExcelService = async (file) => {
     };
 
     const keyMaaping = {
-      "카테고리설명": "cateName",
+      "마이카테명": "cateName",
       "마이카테": "myCate",
-      A: "auctionCate",
-      G: "gmarketCate",
-      N: "naverCate",
-      "11" : 'elevenCate',
-      C: "cupangCate",
-      K: "kCate"
+      "옥션카테": "auctionCate",
+      "G마켓카테": "gmarketCate",
+      "네이버카테": "naverCate",
+      "11번가카테" : 'elevenCate',
+      "쿠팡카테": "cupangCate"
     } 
 
     const transformedData = sheetData.map((row) => transformRow(row, keyMaaping));

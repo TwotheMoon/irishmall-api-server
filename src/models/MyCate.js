@@ -8,7 +8,6 @@ const myCateSchema = new mongoose.Schema({
   naverCate: String,
   elevenCate: String,
   cupangCate: String,
-  kCate: String,
 });
 
 export const MyCate = mongoose.model("my_cate", myCateSchema);
