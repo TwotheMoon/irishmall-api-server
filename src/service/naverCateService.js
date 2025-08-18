@@ -373,13 +373,13 @@ export const updateNaverCateAttrService = async () => {
     return true;
   } catch (error) {
     console.log("전체 처리 중 에러 발생❌:", error);
-    return false;
+    throw error;
   }
 };
 
 // ------------ 배치 ------------
 // 분 시 일 월 요일
 cron.schedule("30 8 * * *", () => {
-  console.log("네이버 카테고리 업데이트 배치 실행");
-  updateNaverAllCateBatch();
+  console.log("네이버 카테고리 및 속성 업데이트 배치 실행");
+  updateNaverCateAttrService();
 }, { timezone: "Asia/Seoul" });
