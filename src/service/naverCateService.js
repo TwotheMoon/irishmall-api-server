@@ -381,5 +381,5 @@ export const updateNaverCateAttrService = async () => {
 // 분 시 일 월 요일
 cron.schedule("30 8 * * *", () => {
   console.log("네이버 카테고리 및 속성 업데이트 배치 실행");
-  updateNaverCateAttrService();
+  updateNaverAllCateBatch();
 }, { timezone: "Asia/Seoul" });
