@@ -33,34 +33,38 @@ export const getAdKeywordService = async (keyword) => {
     const keywordSignature = await createAdSignatureService(secretKey, timestamp, method, adKeywordTool);
     const managedKeywordSignature = await createAdSignatureService(secretKey, timestamp, method, adManagedKeyword);
   
-    const keywordRes = await axios({
-      method: 'GET',
-      url: adApiBaseUrl + adKeywordTool,
-      params: keywordParams,
-      headers: {
-        'X-Timestamp': timestamp,
-        'X-API-KEY': process.env.NAVER_AD_API_ACCESS_LICENSE,
-        'X-CUSTOMER': process.env.NAVER_AD_API_ID,
-        'X-Signature': keywordSignature
-      }
-    });
-    const managedRes = await axios({
-      method: 'GET',
-      url: adApiBaseUrl + adManagedKeyword,
-      params: managedKeywordParams,
-      headers: {
-        'X-Timestamp': timestamp,
-        'X-API-KEY': process.env.NAVER_AD_API_ACCESS_LICENSE,
-        'X-CUSTOMER': process.env.NAVER_AD_API_ID,
-        'X-Signature': managedKeywordSignature
-      }
-    });
+    // keywordRes와 managedRes가 모두 완료된 후에만 filteredKeywords가 실행될 수 있도록 Promise.all 사용
+    const [keywordRes, managedRes] = await Promise.all([
+      axios({
+        method: 'GET',
+        url: adApiBaseUrl + adKeywordTool,
+        params: keywordParams,
+        headers: {
+          'X-Timestamp': timestamp,
+          'X-API-KEY': process.env.NAVER_AD_API_ACCESS_LICENSE,
+          'X-CUSTOMER': process.env.NAVER_AD_API_ID,
+          'X-Signature': keywordSignature
+        }
+      }),
+      axios({
+        method: 'GET',
+        url: adApiBaseUrl + adManagedKeyword,
+        params: managedKeywordParams,
+        headers: {
+          'X-Timestamp': timestamp,
+          'X-API-KEY': process.env.NAVER_AD_API_ACCESS_LICENSE,
+          'X-CUSTOMER': process.env.NAVER_AD_API_ID,
+          'X-Signature': managedKeywordSignature
+        }
+      })
+    ]);
 
     const filteredKeywords = keywordRes.data.keywordList.filter(keywordItem => {
       return !managedRes.data.some(managedItem => 
         managedItem.keyword === keywordItem.relKeyword && managedItem.managedKeyword.isLowSearchVolume
       );
     });
+    console.log("필터링된 키워드", filteredKeywords[0])
 
     return filteredKeywords;
   } catch (error) {
